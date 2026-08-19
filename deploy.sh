@@ -3,7 +3,7 @@ set -e # Exit immediately if a command fails
 
 APP_NAME="telegram-bot"
 IMAGE_NAME="telegram-bot-image"
-PROJECT_DIR="$HOME/telegram-bot"
+PROJECT_DIR="$HOME/test-telegram-bot"
 
 echo "Starting deployment..."
 

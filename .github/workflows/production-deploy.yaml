@@ -23,4 +23,5 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
-            $HOME/telegram-bot/deploy.sh
+            REPO_NAME="${{ github.event.repository.name }}"
+            $HOME/$REPO_NAME/deploy.sh

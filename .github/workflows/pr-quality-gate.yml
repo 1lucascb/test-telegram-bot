@@ -31,6 +31,7 @@ jobs:
         id: engine
         continue-on-error: true # Continue so we can post the PR comment before failing
         run: |
+          pip install pyyaml
           python scripts/quality_engine.py
           echo "ENGINE_EXIT=$?" >> $GITHUB_ENV
 

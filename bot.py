@@ -18,4 +18,5 @@ def repeat_message(message: telebot.types.Message):
         bot.reply_to(message, "Please provide a message to repeat! (e.g., /repeat Hello)")
 
 if __name__ == "__main__":
+    print("Starting")
     bot.infinity_polling()

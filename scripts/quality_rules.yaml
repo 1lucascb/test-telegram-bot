@@ -1,0 +1,92 @@
+gate_settings:
+  blocking_severities:
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+    # - LOW
+
+file_rules:
+  max_lines:
+    enabled: true
+    threshold: 300
+    severity: HIGH
+  max_classes_per_file:
+    enabled: true
+    threshold: 3
+    severity: MEDIUM
+  no_wildcard_imports:
+    enabled: true
+    severity: HIGH
+
+function_rules:
+  max_lines:
+    enabled: true
+    threshold: 60
+    severity: HIGH
+  max_arguments:
+    enabled: true
+    threshold: 5
+    severity: MEDIUM
+  max_returns:
+    enabled: true
+    threshold: 3
+    severity: MEDIUM
+  max_nesting_depth:
+    enabled: true
+    threshold: 3
+    severity: HIGH
+  require_type_hints:
+    enabled: false
+    severity: LOW
+  require_docstring:
+    enabled: true
+    severity: LOW
+  max_cyclomatic_complexity:
+    enabled: true
+    threshold: 10
+    severity: HIGH
+  no_mutable_defaults:
+    enabled: true
+    severity: HIGH
+
+class_rules:
+  max_methods:
+    enabled: true
+    threshold: 12
+    severity: MEDIUM
+  require_docstring:
+    enabled: true
+    severity: LOW
+
+code_smell_rules:
+  no_bare_except:
+    enabled: true
+    severity: HIGH
+  disallowed_calls:
+    enabled: true
+    functions:
+      - eval
+      - exec
+      - breakpoint
+    severity: CRITICAL
+  no_print_statements:
+    enabled: true
+    severity: LOW
+
+architectural_rules:
+  disallowed_imports:
+    enabled: false
+    modules:
+      - pickle
+      - telnetlib
+      - os
+    severity: CRITICAL
+
+exclude_dirs:
+  - .venv
+  - venv
+  - build
+  - dist
+  - __pycache__
+  - .git
+  - scripts

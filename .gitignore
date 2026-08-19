@@ -1,0 +1,4 @@
+venv/
+.env
+quality_*.json
+quality_*.md

@@ -1,0 +1,62 @@
+name: PR Quality Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - master
+
+jobs:
+  quality-gate:
+    name: Run Custom Quality Gate Engine
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Required to post/update comments on PRs
+
+    steps:
+      # 1. Check out the pull request code
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 3. Execute the Custom AST Quality Engine
+      - name: Execute Quality Engine
+        id: engine
+        continue-on-error: true # Continue so we can post the PR comment before failing
+        run: |
+          python scripts/quality_engine.py
+          echo "ENGINE_EXIT=$?" >> $GITHUB_ENV
+
+      # 4. Post or Update PR Comment with the generated Markdown report
+      - name: Post Quality Gate Report to PR
+        uses: peter-evans/create-or-update-comment@v4
+        if: always() # Always run so the PR author gets feedback even on failure
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: 'quality_summary.md'
+          edit-mode: replace # Updates the existing comment on new commits instead of spamming
+
+      # 5. Upload JSON report as a pipeline artifact
+      - name: Upload JSON Report Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-gate-json-report
+          path: quality_report.json
+
+      # 6. Enforce Build Failure if Blocking Violations Were Found
+      - name: Block PR Merge if Quality Gate Failed
+        run: |
+          if [ $ENGINE_EXIT -ne 0 ]; then
+            echo "❌ Custom Quality Gate check failed due to blocking violations."
+            exit 1
+          fi
+          echo "✅ Quality Gate passed successfully."
+  

@@ -10,12 +10,6 @@ if not TELEGRAM_BOT_TOKEN:
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
-try:
-    bot.set_my_name("Imaculado")
-except ApiTelegramException as e:
-    if e.error_code == 429:
-        time.sleep(e.result_json.get('parameters', {}).get('retry_after', 1))
-
 def safe_api_call(func, *args, **kwargs):
     """Executes a bot API function and retries automatically if rate-limited."""
     max_retries = 3
@@ -27,6 +21,7 @@ def safe_api_call(func, *args, **kwargs):
                 # Extract the wait time suggested by Telegram, default to 2 seconds
                 retry_after = e.result_json.get('parameters', {}).get('retry_after', 2)
                 time.sleep(retry_after)
+                print("Waiting for", retry_after, "seconds.")
             else:
                 raise e
     return None
@@ -40,7 +35,7 @@ def repeat_message(message: telebot.types.Message):
     else:
         safe_api_call(bot.reply_to, message, "Please provide a message to repeat! (e.g., /repeat Hello)")
 
-@bot.message_handler(func=lambda message: True)
+@bot.message_handler()
 def fallback(message: telebot.types.Message):
     try:
         reaction = telebot.types.ReactionTypeEmoji("❤️")

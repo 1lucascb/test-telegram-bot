@@ -38,7 +38,10 @@ def repeat_message(message: telebot.types.Message):
 @bot.message_handler()
 def fallback(message: telebot.types.Message):
     try:
-        reaction = telebot.types.ReactionTypeEmoji("❤️")
+        # ❤️
+        # 💙
+        # 💚
+        reaction = telebot.types.ReactionTypeEmoji("💙")
         safe_api_call(bot.set_message_reaction, message.chat.id, message.id, [reaction])
     except Exception:
         safe_api_call(bot.reply_to, message, "Sorry, I couldn't process that.")

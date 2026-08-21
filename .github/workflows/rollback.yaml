@@ -18,7 +18,8 @@ jobs:
         with:
           host: ${{ secrets.VPS_IP_ADDRESS }}
           username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          envs: GITHUB_TOKEN,GITHUB_REPOSITORY_OWNER,GITHUB_REPOSITORY
           script: |
             export GHCR_TOKEN="${{ secrets.GITHUB_TOKEN }}"
             export REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')

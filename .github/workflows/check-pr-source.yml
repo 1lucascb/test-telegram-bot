@@ -1,0 +1,37 @@
+name: Enforce PR Source Branch Rules
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  verify-source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Source and Target Branch Rules
+        run: |
+          TARGET_BRANCH="${{ github.base_ref }}"
+          SOURCE_BRANCH="${{ github.head_ref }}"
+
+          echo "Target Branch (Base): $TARGET_BRANCH"
+          echo "Source Branch (Head): $SOURCE_BRANCH"
+
+          # Rule 1: PRs targeting 'main' MUST originate from 'development'
+          if [ "$TARGET_BRANCH" = "main" ] && [ "$SOURCE_BRANCH" != "development" ]; then
+            echo "::error::PRs targeting 'main' can ONLY come from 'development'."
+            exit 1
+          fi
+
+          # Rule 2: Feature branches CANNOT target 'main' directly
+          if [ "$TARGET_BRANCH" = "main" ] && [[ "$SOURCE_BRANCH" =~ ^feature/ ]]; then
+            echo "::error::Feature branches ('$SOURCE_BRANCH') must be merged into 'development' first."
+            exit 1
+          fi
+
+          echo "Branch rule checks passed successfully!"

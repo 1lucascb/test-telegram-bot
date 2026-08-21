@@ -1,12 +1,13 @@
 #!/bin/bash
-set -e # Exit immediately if a command fails
+set -e
 
 APP_NAME="telegram-bot"
 
-# Dynamically set project directory based on the repository name
-# If REPO_NAME is not set, it falls back to the folder where deploy.sh lives
+# Read target tag from first argument, or default to "latest"
+IMAGE_TAG="${1:-latest}"
+
 PROJECT_DIR="${HOME}/${REPO_NAME:-$(basename "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")}"
-REGISTRY_IMAGE="ghcr.io/${REPO_FULL_NAME}:latest"
+REGISTRY_IMAGE="ghcr.io/${REPO_FULL_NAME}:${IMAGE_TAG}"
 
 echo "Starting deployment..."
 echo "Project Directory: $PROJECT_DIR"
@@ -14,19 +15,17 @@ echo "Target Image: $REGISTRY_IMAGE"
 
 cd "$PROJECT_DIR"
 
-# Ensure .env file exists
 if [ ! -f .env ]; then
     echo "Error: .env file missing in $PROJECT_DIR" >&2
     exit 1
 fi
 
-# Log in to GitHub Container Registry
 if [ -n "$GHCR_TOKEN" ] && [ -n "$REPO_OWNER" ]; then
     echo "Authenticating with GHCR..."
     echo "$GHCR_TOKEN" | docker login ghcr.io -u "$REPO_OWNER" --password-stdin
 fi
 
-echo "Pulling latest Docker image from GHCR..."
+echo "Pulling Docker image ($IMAGE_TAG) from GHCR..."
 docker pull "$REGISTRY_IMAGE"
 
 echo "Replacing existing container..."
@@ -42,4 +41,4 @@ docker run -d \
 echo "Cleaning up dangling images..."
 docker image prune -f
 
-echo "Deployment finished successfully!"
+echo "Deployment finished successfully for tag: $IMAGE_TAG"

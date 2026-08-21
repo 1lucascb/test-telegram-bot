@@ -1,0 +1,28 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: 'Commit SHA or Image Tag to roll back to'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute remote deploy script via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_IP_ADDRESS }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            export GHCR_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+            export REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            export REPO_FULL_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            export REPO_NAME="${{ github.event.repository.name }}"
+            
+            $HOME/$REPO_NAME/deploy.sh ${{ inputs.target_tag }}

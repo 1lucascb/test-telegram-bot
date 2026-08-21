@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - main
-      - master
+      - development
 
 jobs:
   quality-gate:

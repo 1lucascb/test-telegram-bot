@@ -4,10 +4,7 @@ import time
 import telebot
 from telebot.apihelper import ApiTelegramException
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-if not TELEGRAM_BOT_TOKEN:
-    raise Exception("environment variable 'TELEGRAM_BOT_TOKEN' is not set")
-
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "0:0")
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 def safe_api_call(func, *args, **kwargs):

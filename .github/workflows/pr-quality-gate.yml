@@ -8,6 +8,27 @@ on:
       - development
 
 jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run: |
+          pytest --maxfail=1 --disable-warnings -q
+
   quality-gate:
     name: Run Custom Quality Gate Engine
     runs-on: ubuntu-latest

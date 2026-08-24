@@ -50,4 +50,4 @@ jobs:
             export REPO_FULL_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
             export REPO_NAME="${{ github.event.repository.name }}"
             
-            $HOME/$REPO_NAME/deploy.sh ${{ github.sha }}
+            $HOME/$REPO_NAME/deploy.sh latest

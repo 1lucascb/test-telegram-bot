@@ -1,0 +1,27 @@
+name: Create a PR to production
+
+on:
+  pull_request:
+    branches:
+      - development
+    types:
+      - closed
+
+jobs:
+  create-pr:
+    name: Create PR to production
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create PR to production
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Merge development into production"
+          body: "This PR merges the changes from the development branch into the production branch."
+          base: main
+          head: development

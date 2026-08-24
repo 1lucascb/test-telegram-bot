@@ -7,6 +7,10 @@ on:
     types:
       - closed
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   create-pr:
     name: Create PR to production
@@ -21,7 +25,6 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // Check if PR exists
             const { data: existingPRs } = await github.rest.pulls.list({
               owner,
               repo,
@@ -35,7 +38,6 @@ jobs:
               return;
             }
 
-            // Create PR
             const { data: newPR } = await github.rest.pulls.create({
               owner,
               repo,

@@ -1,8 +1,11 @@
 import os
-import sys
+import logging
 import time
 import telebot
 from telebot.apihelper import ApiTelegramException
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "0:0")
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -18,7 +21,7 @@ def safe_api_call(func, *args, **kwargs):
                 # Extract the wait time suggested by Telegram, default to 2 seconds
                 retry_after = e.result_json.get('parameters', {}).get('retry_after', 2)
                 time.sleep(retry_after)
-                print("Waiting for", retry_after, "seconds.")
+                logger.info("Waiting for %d seconds.", retry_after)
             else:
                 raise e
     return None
@@ -38,9 +41,10 @@ def fallback(message: telebot.types.Message):
         # ❤️
         # 💙
         # 💚
-        reaction = telebot.types.ReactionTypeEmoji("💙")
+        reaction = telebot.types.ReactionTypeEmoji("❤️")
         safe_api_call(bot.set_message_reaction, message.chat.id, message.id, [reaction])
-    except Exception:
+    except Exception as e:
+        logger.error("Failed to set reaction: %s", e)
         safe_api_call(bot.reply_to, message, "Sorry, I couldn't process that.")
 
 if __name__ == "__main__":
